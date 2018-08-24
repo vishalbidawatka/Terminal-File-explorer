@@ -9,29 +9,34 @@
 #include <pwd.h>
 #include <grp.h>
 #include <termios.h>
+#include <bits/stdc++.h>
+#include <sys/ioctl.h>
 
 
-
-
+using namespace std;
+void windowsize(int& a, int& b);
+void printvector(vector<vector< string > >& filesinfo,int start, int end);
+int print_content(std::vector<std::vector< string > >& filesinfo);
+void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int cursor_pos); 
+int scrollingflag(vector<vector<string> >& a);
+int rows,columns;
+string HOME;
 
 struct termios initialrsettings,newrsettings;
 #define clear() printf("\033[H\033[J")
 #define home() printf("\033[1;0H")
 #define downwards() printf("\033[B")
 #define upwards() printf("\033[A")
-#define scroll() printf("\033[r")
+#define scrollup() printf("\033[M")
+#define forcecursor(x,y) printf("\033[%d;%df",x,y)
+
 
 #define KEY_UP      0x0105
 #define KEY_DOWN    0x0106
 #define KEY_LEFT    0x0107
 #define KEY_RIGHT   0x0108
-using namespace std;
 
-// cout<<a;
-// newrsettings = initialrsettings;
-// newrsettings.c_1flag = ~ICANON;
-// newrsettings.MIN  = 1;
-// newrsettings.TIME = 0;
+
 string permission_of_file(struct stat fstatus);
 string presentworkingdir()
 {
@@ -42,13 +47,14 @@ string presentworkingdir()
 
 }
 
-struct dirent **dirent_structure;
-void contentofpwd(string s)
+
+vector<vector<string > > contentofpwd(string s)
 {
 	// char char_array[direcname.size() + 1]; 
 	// strcpy(char_array, direcname.c_str()); 
+	struct dirent **dirent_structure;
 	DIR *dir;
-	vector<string> files;
+	vector<vector <string> > files_info; 
 	//struct dirent **dirent_structure;
 	char * file_name;
 	char *username;
@@ -64,10 +70,25 @@ void contentofpwd(string s)
 	struct tm *date_time;
 	char date_time_buffer[40];
 	int no_of_files = scandir(s.c_str(),&dirent_structure,NULL,alphasort);
-	for(int i =0;i<no_of_files;i++)
+	//cout<<"no_of_files"<<no_of_files;
+	char filenamebuff[4096];
+	for(int i =0 ; i<no_of_files ; i++)
 	{
+	// {	cout<<"before1";
+		vector<string> file_info ;
+	// 	cout<<"before";
 		file_name = dirent_structure[i]->d_name;
-		stat(file_name,&filestatus);
+		realpath(file_name,filenamebuff);
+	// 	cout<<"before";
+	// 	char char_array[s.length()+1]; 
+	// 	strcpy(char_array,s.c_str());
+	// 	strcat(char_array,"/");
+	// 	strcat(char_array,file_name);
+
+		if (stat(filenamebuff,&filestatus) == -1)
+		{	cout<<"file name"<<filenamebuff<<endl;
+			cout<<"lag gaye"<<endl;
+		}
 		userid = filestatus.st_uid;
 		groupid = filestatus.st_gid;
 		modified_time = filestatus.st_mtime;
@@ -76,42 +97,39 @@ void contentofpwd(string s)
 		
 		forusername = getpwuid(userid);
 		gro = getgrgid(groupid);
-		cout<<forusername->pw_name<<" "<<gro->gr_name<<" "<<string(date_time_buffer)<<" "<<permission_of_file(filestatus)<<" ";
+		//cout<<forusername->pw_name<<" "<<gro->gr_name<<" "<<string(date_time_buffer)<<" "<<permission_of_file(filestatus)<<" ";
+		filesize = (int)filestatus.st_size;
 
 
-		filesize = (unsigned int)filestatus.st_size;
+		file_info.push_back(forusername->pw_name);
+		file_info.push_back(gro->gr_name);
+		file_info.push_back(string(date_time_buffer));
+		file_info.push_back(permission_of_file(filestatus));
+		//std::string size = std::to_string(filesize);
+		//file_info.push_back(filesize);
+		file_info.push_back(file_name);
 
-		cout<<filesize<<" "<<file_name<<" "<<endl;
 
 
-
-	}
-	// while ((dirent_structure=scandir(dir,alphasort)) != NULL) 
-	// {
-	// 	file_name =  dirent_structure->d_name;
-	// 	stat(file_name,&filestatus);
-	// 	userid = filestatus.st_uid;
-	// 	groupid = filestatus.st_gid;
-	// 	modified_time = filestatus.st_mtime;
-	// 	date_time = localtime(&modified_time);
-	// 	strftime(date_time_buffer,sizeof(date_time_buffer),   " %H:%M:%S %d/%m/%Y" , date_time);
 		
-	// 	forusername = getpwuid(userid);
-	// 	gro = getgrgid(groupid);
-	// 	cout<<forusername->pw_name<<" "<<gro->gr_name<<" "<<string(date_time_buffer)<<" "<<permission_of_file(filestatus)<<" ";
 
+		//cout<<filesize<<" "<<file_name<<" "<<endl;
 
-	// 	filesize = (unsigned int)filestatus.st_size;
+		files_info.push_back(file_info);
+		//cout<<i<<endl;
+	}
+	return files_info;
 
-	// 	cout<<filesize<<" "<<file_name<<" "<<endl;
-		       
-	// }
-	//return files;
 }
 string permission_of_file(struct stat fstatus)
 {	
 	string s;
 	mode_t mode = fstatus.st_mode;
+	if(S_ISDIR(mode))
+	{
+		s.insert(s.end(),'d');
+
+	}
 	//cout<<mode<<"mode"<<endl;
 	if(mode & S_IRUSR)
 	{
@@ -189,12 +207,13 @@ string permission_of_file(struct stat fstatus)
 	}
 	return s;
 }
-static int kbget(void)
+void windowsize(int& a, int& b)
 {
-    int c;
 
-    c = getchar();
-    return c;
+	struct winsize w;
+    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+    a = w.ws_row;
+    b = w.ws_col;
 }
 
 int main(int argc, char const *argv[])
@@ -208,45 +227,114 @@ int main(int argc, char const *argv[])
 	newrsettings.c_cc[VMIN] = 1;
 	newrsettings.c_cc[VTIME] = 0;
 	tcsetattr(fileno(stdin), TCSANOW, &newrsettings);
+	
+	windowsize(rows,columns);
+	HOME = presentworkingdir();
+	vector<vector< string> > current_d = contentofpwd(HOME);
+	
+	struct stat filestatus_2;
+	
+
+	//forcecursor(rows,columns);
+	//scroll();
+	int i = 0;
 	clear();
-	contentofpwd(presentworkingdir());
+	print_content(current_d);
+	int count = 0;
 	home();
-	int i =0;
 	while(1)
 	{	
+		
+		windowsize(rows,columns);
 		c = (int)getchar();
 		if(c == '\n')
 
-		{
-			char buf[4096];
-			realpath(dirent_structure[i]->d_name,buf);
-			
-			clear();
-			cout<<string(buf)<<endl;
-			contentofpwd(string(buf));
-			home();
-			i = -1 ;
-			
+		{	i = i+count;
+			if(current_d[i][3][0] == 'd')
+			{
+
+				clear();
+				char buf[4096];
+				realpath(current_d[i][4].c_str(),buf);
+				//cout<<buf<<endl;
+				stat(buf,&filestatus_2);
+				chdir(buf);
+				count = 0; 
+				vector<vector< string> > new_d = contentofpwd(string(buf));
+				current_d = new_d;
+				print_content(current_d);
+
+				home();
+				i = 0 ;
+			}
 		}
-		
-		
 		if(c == 'B')
 		{	
 			downwards();
-			scroll();
+			
+			if(i==rows)
+			{
+				if(scrollingflag(current_d) && rows+count<current_d.size()-1 )
+				{
+					count++;
+					clear();
+					print_scrolling_content(current_d,count);
+					continue;
+
+				}
+				continue;
+			}
 			i++;
+			//cout<<i;
 		}
 		if(c == 'A')
 		{	
 			upwards();
+			if(i == 0)
+			{
+				if(scrollingflag(current_d) && count>=0)
+				{
+					count--;
+					clear();
+					print_scrolling_content(current_d,count);
+					home();
+					continue;
+				}
+				continue;
+			}
+		
 			i--;
 		}
 	
 		if(c == 'p')
 		{
-
+			clear();
 			break;
 
+		}
+		if(c== 'h' || c== 'H')
+		{		
+				clear();
+				chdir(HOME.c_str());
+				count = 0; 
+				vector<vector< string> > new_d = contentofpwd(HOME);
+				current_d = new_d;
+				print_content(current_d);
+				home();
+				i = 0 ;
+		}
+		if(c== 127 || c== 8)
+		{		
+				clear();
+				string s = presentworkingdir();
+				s = s+"/..";
+				chdir(s.c_str());
+				count = 0; 
+				vector<vector< string> > new_d = contentofpwd(presentworkingdir());
+				current_d = new_d;
+				print_content(current_d);
+				home();
+				i = 0 ;
 		}
 
 	}
@@ -255,3 +343,101 @@ int main(int argc, char const *argv[])
 
 	return 0;
 }
+int print_content(std::vector<std::vector< string > >& filesinfo)
+{
+	if(filesinfo.size()<=rows)
+	{
+		for(int i = 0 ; i<filesinfo.size(); i++)
+		{
+
+		for(int j =0; j<filesinfo[i].size(); j++)
+		{
+
+			cout<<filesinfo[i][j]<<" ";
+
+
+		}
+
+		cout<<endl;
+
+		}
+	}
+	else
+	{	//cout<<"ROWS"<<rows;
+		for(int i = 0 ; i<rows-1; i++)
+		{
+
+		for(int j =0; j<filesinfo[i].size(); j++)
+		{
+
+			cout<<filesinfo[i][j]<<" ";
+
+
+		}
+
+		cout<<endl;
+
+		}
+
+	}
+
+}
+void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int cursor_pos)
+{
+
+	if(rows+cursor_pos<=filesinfo.size())
+	{
+	for(int i = cursor_pos ; i<rows+cursor_pos; i++)
+		{
+
+		for(int j =0; j<filesinfo[i].size(); j++)
+		{
+
+			cout<<filesinfo[i][j]<<" ";
+
+
+		}
+
+		cout<<endl;
+
+		}
+	}
+	
+}
+
+int scrollingflag(vector<vector<string> >& a)
+{
+	if(a.size()<=rows)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+
+
+
+// void printvector(std::vector<std::vector< string > >& filesinfo,int start, int end)
+// {
+// 	for(int i = start ; i<=end ; i++)
+// 	{
+
+// 		for(int j =0; j<filesinfo[i].size(); j++)
+// 		{
+
+// 			cout<<filesinfo[i][j]<<" ";
+
+
+// 		}
+
+// 		cout<<endl;
+
+// 	}
+
+
+
+
+
