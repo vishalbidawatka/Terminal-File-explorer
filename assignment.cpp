@@ -249,13 +249,14 @@ int main(int argc, char const *argv[])
 		c = (int)getchar();
 		if(c == '\n')
 
-		{	i = i+count;
+		{	int retrieval_int = i+count;
 			if(current_d[i][3][0] == 'd')
 			{
-
+				if(!(presentworkingdir() == HOME && current_d[retrieval_int][4] == ".."))
+				{
 				clear();
 				char buf[4096];
-				realpath(current_d[i][4].c_str(),buf);
+				realpath(current_d[retrieval_int][4].c_str(),buf);
 				//cout<<buf<<endl;
 				stat(buf,&filestatus_2);
 				chdir(buf);
@@ -264,17 +265,35 @@ int main(int argc, char const *argv[])
 				current_d = new_d;
 				print_content(current_d);
 
+				}
 				home();
 				i = 0 ;
+				count = 0;
 			}
+			else
+			{	
+
+				//int storing_i = i;
+				char buf2[4096];
+				realpath(current_d[retrieval_int][4].c_str(),buf2);
+				strcat(buf2,"\0");
+				int pid = fork();
+				if (pid == 0) {
+				execl("/usr/bin/xdg-open", "xdg-open", buf2, (char *)0);
+				exit(1);
+				}
+				
+			}
+			//forcecursor(i,0);
 		}
 		if(c == 'B')
 		{	
+
 			downwards();
 			
 			if(i==rows)
 			{
-				if(scrollingflag(current_d) && rows+count<current_d.size()-1 )
+				if(scrollingflag(current_d) && rows+count<current_d.size())
 				{
 					count++;
 					clear();
@@ -285,14 +304,15 @@ int main(int argc, char const *argv[])
 				continue;
 			}
 			i++;
-			//cout<<i;
+			//cout<<i+count<<" "<<i;
+			//forcecursor(i,0);
 		}
 		if(c == 'A')
 		{	
 			upwards();
-			if(i == 0)
+			if(i == 1)
 			{
-				if(scrollingflag(current_d) && count>=0)
+				if(scrollingflag(current_d) && count>-1)
 				{
 					count--;
 					clear();
@@ -302,8 +322,10 @@ int main(int argc, char const *argv[])
 				}
 				continue;
 			}
-		
+			if(i != 0)
 			i--;
+			//cout<<i+count<<" "<<i;
+			//forcecursor(i,0);
 		}
 	
 		if(c == 'p')
@@ -324,7 +346,7 @@ int main(int argc, char const *argv[])
 				i = 0 ;
 		}
 		if(c== 127 || c== 8)
-		{		
+		{		if(!(presentworkingdir() == HOME)){
 				clear();
 				string s = presentworkingdir();
 				s = s+"/..";
@@ -335,6 +357,7 @@ int main(int argc, char const *argv[])
 				print_content(current_d);
 				home();
 				i = 0 ;
+			}
 		}
 
 	}
@@ -358,7 +381,7 @@ int print_content(std::vector<std::vector< string > >& filesinfo)
 
 		}
 
-		cout<<endl;
+		cout<<i<<endl;
 
 		}
 	}
@@ -375,7 +398,7 @@ int print_content(std::vector<std::vector< string > >& filesinfo)
 
 		}
 
-		cout<<endl;
+		cout<<i<<endl;
 
 		}
 
@@ -385,8 +408,7 @@ int print_content(std::vector<std::vector< string > >& filesinfo)
 void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int cursor_pos)
 {
 
-	if(rows+cursor_pos<=filesinfo.size())
-	{
+
 	for(int i = cursor_pos ; i<rows+cursor_pos; i++)
 		{
 
@@ -398,12 +420,11 @@ void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int
 
 		}
 
-		cout<<endl;
+		cout<<i<<endl;
 
 		}
 	}
 	
-}
 
 int scrollingflag(vector<vector<string> >& a)
 {
@@ -436,6 +457,7 @@ int scrollingflag(vector<vector<string> >& a)
 // 		cout<<endl;
 
 // 	}
+
 
 
 
