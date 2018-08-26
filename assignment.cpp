@@ -19,7 +19,14 @@ void printvector(vector<vector< string > >& filesinfo,int start, int end);
 int print_content(std::vector<std::vector< string > >& filesinfo);
 void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int cursor_pos); 
 int scrollingflag(vector<vector<string> >& a);
+void display_status_bar(int cursor_pos);
+void setting_terminal_attributes();
 int rows,columns;
+int cursor = 0 ;
+int relative_count = 0;
+
+
+//int overflow = 0 ;
 string HOME;
 
 struct termios initialrsettings,newrsettings;
@@ -29,6 +36,9 @@ struct termios initialrsettings,newrsettings;
 #define upwards() printf("\033[A")
 #define scrollup() printf("\033[M")
 #define forcecursor(x,y) printf("\033[%d;%df",x,y)
+#define save_cursor() printf("\033[s")
+#define restore_cursor_back() printf( "\0338");
+
 
 
 #define KEY_UP      0x0105
@@ -217,65 +227,54 @@ void windowsize(int& a, int& b)
 }
 
 int main(int argc, char const *argv[])
-{	char c;
-	//contentofpwd();
-	
-	tcgetattr(fileno(stdin), &initialrsettings);
-	newrsettings = initialrsettings;
-	newrsettings.c_lflag &= ~ICANON;
-	newrsettings.c_lflag &= ~ECHO;
-	newrsettings.c_cc[VMIN] = 1;
-	newrsettings.c_cc[VTIME] = 0;
-	tcsetattr(fileno(stdin), TCSANOW, &newrsettings);
+{	
+
+	char c;
+	int count  = 0;
+	int down_scroll_flag = 0;
+	setting_terminal_attributes();
 	
 	windowsize(rows,columns);
 	HOME = presentworkingdir();
 	vector<vector< string> > current_d = contentofpwd(HOME);
-	
 	struct stat filestatus_2;
-	
-
-	//forcecursor(rows,columns);
-	//scroll();
-	int i = 0;
 	clear();
 	print_content(current_d);
-	int count = 0;
 	home();
 	while(1)
 	{	
-		
+		display_status_bar(cursor);
 		windowsize(rows,columns);
 		c = (int)getchar();
 		if(c == '\n')
 
-		{	int retrieval_int = i+count;
-			if(current_d[i][3][0] == 'd')
+		{	
+			if(current_d[relative_count][3][0] == 'd')
 			{
-				if(!(presentworkingdir() == HOME && current_d[retrieval_int][4] == ".."))
+				if(!(presentworkingdir() == HOME && current_d[relative_count][4] == ".."))
 				{
 				clear();
 				char buf[4096];
-				realpath(current_d[retrieval_int][4].c_str(),buf);
+				realpath(current_d[relative_count][4].c_str(),buf);
 				//cout<<buf<<endl;
 				stat(buf,&filestatus_2);
 				chdir(buf);
-				count = 0; 
 				vector<vector< string> > new_d = contentofpwd(string(buf));
 				current_d = new_d;
 				print_content(current_d);
+				home();
+				relative_count = 0;
+				count = 0;
+				cursor = 0;
 
 				}
-				home();
-				i = 0 ;
-				count = 0;
 			}
 			else
 			{	
 
 				//int storing_i = i;
 				char buf2[4096];
-				realpath(current_d[retrieval_int][4].c_str(),buf2);
+				realpath(current_d[relative_count][4].c_str(),buf2);
 				strcat(buf2,"\0");
 				int pid = fork();
 				if (pid == 0) {
@@ -289,61 +288,72 @@ int main(int argc, char const *argv[])
 		if(c == 'B')
 		{	
 
-			downwards();
 			
-			if(i==rows)
+			if(relative_count<current_d.size()-1)
 			{
-				if(scrollingflag(current_d) && rows+count<current_d.size())
-				{
+			downwards();
+			relative_count++;
+			if(cursor == rows-2)
+			{	
+				
+				if(scrollingflag(current_d) && relative_count<current_d.size())
+				{	
 					count++;
 					clear();
 					print_scrolling_content(current_d,count);
-					continue;
-
+					down_scroll_flag = 1;
+					forcecursor(rows-1,0);					
 				}
-				continue;
+				
 			}
-			i++;
-			//cout<<i+count<<" "<<i;
-			//forcecursor(i,0);
+			else
+			{
+			cursor++;
+			}
+			cout<<cursor<<" "<<relative_count;
+		}
 		}
 		if(c == 'A')
 		{	
-			upwards();
-			if(i == 1)
+			
+			if(relative_count>0)
 			{
-				if(scrollingflag(current_d) && count>-1)
-				{
+			upwards();
+			relative_count--;
+			if(cursor == 0)
+			{
+				if(scrollingflag(current_d) && count>0 && down_scroll_flag)
+				{	
+					
 					count--;
 					clear();
 					print_scrolling_content(current_d,count);
 					home();
-					continue;
+					
 				}
-				continue;
 			}
-			if(i != 0)
-			i--;
-			//cout<<i+count<<" "<<i;
-			//forcecursor(i,0);
-		}
-	
-		if(c == 'p')
-		{
-			clear();
-			break;
+			else
+			{
+				cursor--;
+				
+			}
+			cout<<cursor;
+				
+			}
 
 		}
+
 		if(c== 'h' || c== 'H')
 		{		
 				clear();
 				chdir(HOME.c_str());
-				count = 0; 
 				vector<vector< string> > new_d = contentofpwd(HOME);
 				current_d = new_d;
 				print_content(current_d);
 				home();
-				i = 0 ;
+				relative_count = 0;
+				count = 0; 
+				cursor = 0;
 		}
 		if(c== 127 || c== 8)
 		{		if(!(presentworkingdir() == HOME)){
@@ -351,24 +361,46 @@ int main(int argc, char const *argv[])
 				string s = presentworkingdir();
 				s = s+"/..";
 				chdir(s.c_str());
-				count = 0; 
 				vector<vector< string> > new_d = contentofpwd(presentworkingdir());
 				current_d = new_d;
 				print_content(current_d);
 				home();
-				i = 0 ;
+				relative_count = 0;
+				count = 0;
+				cursor = 0;
 			}
 		}
 
+		display_status_bar(cursor);
+
+		if(c == 'p')
+		{
+			clear();
+			break;
+
+		}
 	}
 	tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);
 	
 
 	return 0;
 }
+void setting_terminal_attributes()
+{
+
+	tcgetattr(fileno(stdin), &initialrsettings);
+	newrsettings = initialrsettings;
+	newrsettings.c_lflag &= ~ICANON;
+	newrsettings.c_lflag &= ~ECHO;
+	newrsettings.c_cc[VMIN] = 1;
+	newrsettings.c_cc[VTIME] = 0;
+	tcsetattr(fileno(stdin), TCSANOW, &newrsettings);
+
+
+}
 int print_content(std::vector<std::vector< string > >& filesinfo)
 {
-	if(filesinfo.size()<=rows)
+	if(filesinfo.size()<=rows-1)
 	{
 		for(int i = 0 ; i<filesinfo.size(); i++)
 		{
@@ -409,7 +441,7 @@ void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int
 {
 
 
-	for(int i = cursor_pos ; i<rows+cursor_pos; i++)
+	for(int i = cursor_pos ; i<rows+cursor_pos-1; i++)
 		{
 
 		for(int j =0; j<filesinfo[i].size(); j++)
@@ -437,29 +469,13 @@ int scrollingflag(vector<vector<string> >& a)
 		return 1;
 	}
 }
+void display_status_bar(int cursor_pos)
+{	char normal_mode[columns] = "NORMAL MODE\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+	save_cursor();
+	forcecursor(rows,0);
+	printf("%c[%d;%d;%dm%s%c[%dm",27,1,30,47,normal_mode,27,0);
+	restore_cursor_back();
 
-
-
-
-// void printvector(std::vector<std::vector< string > >& filesinfo,int start, int end)
-// {
-// 	for(int i = start ; i<=end ; i++)
-// 	{
-
-// 		for(int j =0; j<filesinfo[i].size(); j++)
-// 		{
-
-// 			cout<<filesinfo[i][j]<<" ";
-
-
-// 		}
-
-// 		cout<<endl;
-
-// 	}
-
-
-
-
+}
 
 
