@@ -11,6 +11,7 @@
 #include <termios.h>
 #include <bits/stdc++.h>
 #include <sys/ioctl.h>
+#include <stack>
 
 
 using namespace std;
@@ -21,6 +22,7 @@ void print_scrolling_content(std::vector<std::vector< string > >& filesinfo, int
 int scrollingflag(vector<vector<string> >& a);
 void display_status_bar(int cursor_pos);
 void setting_terminal_attributes();
+void make_stack_empty(stack<string>& s);
 int rows,columns;
 int cursor = 0 ;
 int relative_count = 0;
@@ -41,6 +43,7 @@ struct termios initialrsettings,newrsettings;
 
 
 
+stack<string> left_one, right_one;
 #define KEY_UP      0x0105
 #define KEY_DOWN    0x0106
 #define KEY_LEFT    0x0107
@@ -139,6 +142,10 @@ string permission_of_file(struct stat fstatus)
 	{
 		s.insert(s.end(),'d');
 
+	}
+	else
+	{
+		s.insert(s.end(),'-');
 	}
 	//cout<<mode<<"mode"<<endl;
 	if(mode & S_IRUSR)
@@ -240,6 +247,7 @@ int main(int argc, char const *argv[])
 	struct stat filestatus_2;
 	clear();
 	print_content(current_d);
+	left_one.push(HOME);
 	home();
 	while(1)
 	{	
@@ -259,6 +267,8 @@ int main(int argc, char const *argv[])
 				//cout<<buf<<endl;
 				stat(buf,&filestatus_2);
 				chdir(buf);
+				left_one.push(string(buf));
+				make_stack_empty(right_one);
 				vector<vector< string> > new_d = contentofpwd(string(buf));
 				current_d = new_d;
 				print_content(current_d);
@@ -310,7 +320,7 @@ int main(int argc, char const *argv[])
 			{
 			cursor++;
 			}
-			cout<<cursor<<" "<<relative_count;
+			//cout<<cursor<<" "<<relative_count;
 		}
 		}
 		if(c == 'A')
@@ -337,7 +347,7 @@ int main(int argc, char const *argv[])
 				cursor--;
 				
 			}
-			cout<<cursor;
+			//cout<<cursor;
 				
 			}
 
@@ -346,6 +356,8 @@ int main(int argc, char const *argv[])
 		if(c== 'h' || c== 'H')
 		{		
 				clear();
+				left_one.push(HOME);
+				make_stack_empty(right_one);
 				chdir(HOME.c_str());
 				vector<vector< string> > new_d = contentofpwd(HOME);
 				current_d = new_d;
@@ -356,10 +368,14 @@ int main(int argc, char const *argv[])
 				cursor = 0;
 		}
 		if(c== 127 || c== 8)
-		{		if(!(presentworkingdir() == HOME)){
+		{		
+			if(!(presentworkingdir() == HOME))
+			{
 				clear();
 				string s = presentworkingdir();
 				s = s+"/..";
+				left_one.push(s);
+				make_stack_empty(right_one);
 				chdir(s.c_str());
 				vector<vector< string> > new_d = contentofpwd(presentworkingdir());
 				current_d = new_d;
@@ -370,8 +386,27 @@ int main(int argc, char const *argv[])
 				cursor = 0;
 			}
 		}
+		if(c == 'D')
+		{	
+			//cout<<"left";
+			
+			string temp = left_one.top();
+			if(temp != HOME || (left_one.size()!=1))
+			{
+			clear();
+			left_one.pop();
+			right_one.push(temp);
+			chdir((left_one.top()).c_str());
+			vector<vector< string> > new_d = contentofpwd(presentworkingdir());
+			current_d = new_d;
+			print_content(current_d);
+			home();
+			relative_count = 0;
+			count = 0;
+			cursor = 0;
+			}
 
-		display_status_bar(cursor);
+		}
 
 		if(c == 'p')
 		{
@@ -379,6 +414,35 @@ int main(int argc, char const *argv[])
 			break;
 
 		}
+		if(c == 'C')
+		
+		{	
+			
+			if(!(right_one.empty()))
+			{
+				clear();
+				string temp = right_one.top();
+				right_one.pop();
+				left_one.push(temp);
+				chdir(temp.c_str());
+				vector<vector< string> > new_d = contentofpwd(presentworkingdir());
+				current_d = new_d;
+				print_content(current_d);
+				home();
+				relative_count = 0;
+				count = 0;
+				cursor = 0;
+			}
+
+
+
+		}
+
+		
+
+		display_status_bar(cursor);
+
+
 	}
 	tcsetattr(fileno(stdin), TCSANOW, &initialrsettings);
 	
@@ -477,5 +541,14 @@ void display_status_bar(int cursor_pos)
 	restore_cursor_back();
 
 }
+void make_stack_empty(stack<string>& s)
+{
 
+	while(!(s.empty()))
+	{
+		s.pop();
+	}
+
+
+}
 
