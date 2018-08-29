@@ -12,6 +12,8 @@
 #include <bits/stdc++.h>
 #include <sys/ioctl.h>
 #include <stack>
+#include<fcntl.h>
+#include <ftw.h>
 
 using namespace std;
 
@@ -48,7 +50,10 @@ void exit_command_mode(string current_working_directory);
 string permission_of_file(struct stat fstatus);
 vector<string> split_command(string command);
 void printing_whole_page(string path);
-int delv(string s);
+int delv(vector<string> s, string cwd);
+void execute_command(vector<string> s , string current_working_directory );
+int unlinkv(const char *path, const struct stat *sb, int dn, struct FTW *buf);
+int deldir(vector<string> s, string cwd);
 
 extern struct termios initialrsettings,newrsettings,initial_command_settings,new_commandM_settings;
 extern stack<string> left_one, right_one;
