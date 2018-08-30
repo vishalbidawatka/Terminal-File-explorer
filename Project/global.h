@@ -54,6 +54,8 @@ int delv(vector<string> s, string cwd);
 void execute_command(vector<string> s , string current_working_directory );
 int unlinkv(const char *path, const struct stat *sb, int dn, struct FTW *buf);
 int deldir(vector<string> s, string cwd);
+int create_files(string file_name,string destination ,vector<string> s,string current_working_directory);
+int create_multiple_files(vector<string> s,string current_working_directory);
 
 extern struct termios initialrsettings,newrsettings,initial_command_settings,new_commandM_settings;
 extern stack<string> left_one, right_one;

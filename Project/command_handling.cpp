@@ -1,20 +1,20 @@
 #include "global.h"
-void enter_command_mode_old()
-{
+// void enter_command_mode_old()
+// {
 
-	// tcgetattr(fileno(stdin), &initial_command_settings);
-	// new_commandM_settings = initial_command_settings;
-	// new_commandM_settings.c_lflag = ICANON;
-	// new_commandM_settings.c_lflag = ECHO;
-	// tcsetattr(fileno(stdin), TCSANOW, &new_commandM_settings);
-	forcecursor(rows,0);
-	clear_line();
-	cout<<":";
-	string s;
-	//forcecursor(rows,1);
-	string command = get_command(s);
+// 	// tcgetattr(fileno(stdin), &initial_command_settings);
+// 	// new_commandM_settings = initial_command_settings;
+// 	// new_commandM_settings.c_lflag = ICANON;
+// 	// new_commandM_settings.c_lflag = ECHO;
+// 	// tcsetattr(fileno(stdin), TCSANOW, &new_commandM_settings);
+// 	forcecursor(rows,0);
+// 	clear_line();
+// 	cout<<":";
+// 	string s;
+// 	//forcecursor(rows,1);
+// 	string command = get_command(s);
 
-}
+// }
 void enter_command_mode(string current_working_directory)
 {
 	chdir(HOME.c_str());
@@ -106,16 +106,17 @@ vector<string> split_command(string command)
 }
 void execute_command(vector<string> s , string current_working_directory )
 {	
-	cout<<s[0]<<" command";
-	if(s[1] == "copy")
+	//cout<<s[0]<<" command";
+	if(s[0] == "copy")
 	{
+		
+	}
+	else if(s[0] == "create_file")
+	{
+		create_multiple_files(s,current_working_directory);
 		//copy_files(s,current_working_directory);
 	}
-	else if(s[1] == "create_file")
-	{
-		//copy_files(s,current_working_directory);
-	}
-	else if(s[1] == "create_dir")
+	else if(s[0] == "create_dir")
 	{
 		//copy_files(s,current_working_directory);
 	}
@@ -128,15 +129,15 @@ void execute_command(vector<string> s , string current_working_directory )
 		deldir(s,current_working_directory);
 		//copy_files(s,current_working_directory);
 	}
-	else if(s[1] == "goto")
+	else if(s[0] == "goto")
 	{
 		//copy_files(s,current_working_directory);
 	}
-	else if(s[1] == "search")
+	else if(s[0] == "search")
 	{
 		//copy_files(s,current_working_directory);
 	}
-	else if(s[1] == "snapshot")
+	else if(s[0] == "snapshot")
 	{
 		//copy_files(s,current_working_directory);
 	}
