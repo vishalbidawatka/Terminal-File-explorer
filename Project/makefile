@@ -1,26 +1,14 @@
-CPP = g++
-CPPFLAGS = -std=c++11
+CC = g++
+CFLAGS =  -std=c++11
+DEPS = global.h
+OBJ =delete.o file_status.o scrolling_printing.o command_handling.o creating_file.o global.h new_code.o copy_files.o goto_dir.o recursion_list.o
+%.o: %.cpp $(DEPS)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
-vishalfm: delete.o file_status.o scrolling_printing.o command_handling.o creating_file.o global.h new_code.o
-	$(CPP) $(CPPFLAGS) delete.o file_status.o scrolling_printing.o command_handling.o creating_file.o global.h new_code.o -o vishalfm
+vishalfm: $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $^
 
-new_code.o: new_code.cpp global.h
-	$(CPP) $(CPPFLAGS) -c new_code.cpp
-
-delete.o: delete.cpp global.h
-	$(CPP) $(CPPFLAGS) -c delete.cpp
-
-file_status.o: file_status.cpp global.h
-	$(CPP) $(	CPPFLAGS) -c file_status.cpp
-
-scrolling_printing.o: scrolling_printing.cpp global.h
-	$(CPP) $(CPPFLAGS) -c scrolling_printing.cpp
-
-command_handling.o: command_handling.cpp global.h
-	$(CPP) $(CPPFLAGS) -c command_handling.cpp
-	
-creating_file.o: creating_file.cpp global.h
-	$(CPP) $(CPPFLAGS) -c creating_file.cpp
-
+clean:
+	rm *.o
 fix:vishalfm
 	chmod +x vishalfm

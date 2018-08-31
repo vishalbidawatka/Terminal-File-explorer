@@ -40,14 +40,19 @@ string get_command(string current_working_directory)
 	char c;
 	string command;
 	int command_cursor = 0;
+	int command_return_code;
 	while(1)
 	{
 		c = getchar();
 		if(c == '\n')
 		{	
 			seprated_command = split_command(command);
-			execute_command(seprated_command,current_working_directory);
-			chdir(HOME.c_str());
+			command_return_code = execute_command(seprated_command,current_working_directory);
+			//chdir(HOME.c_str());
+			if(command_return_code == 5)
+			{
+				return "0";
+			}
 			forcecursor(rows,0);
 			// clear_line();   
 			// command_cursor = 0;  
@@ -104,41 +109,52 @@ vector<string> split_command(string command)
 	return splited_string;
 
 }
-void execute_command(vector<string> s , string current_working_directory )
+int execute_command(vector<string> s , string current_working_directory )
 {	
 	//cout<<s[0]<<" command";
 	if(s[0] == "copy")
-	{
-		
+	{	
+		copy_multiple_files(s,current_working_directory);
+		return 0;
 	}
 	else if(s[0] == "create_file")
 	{
 		create_multiple_files(s,current_working_directory);
+		return 1;
 		//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "create_dir")
 	{
+		creating_directory(s,current_working_directory);
+		return 2;
+
 		//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "delete_file")
 	{
 		delv(s,current_working_directory);
+		return 3;
 	}
 	else if(s[0] == "delete_dir")
 	{
 		deldir(s,current_working_directory);
+		return 4;
+
 		//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "goto")
-	{
-		//copy_files(s,current_working_directory);
+	{	
+		goto_dir(s,current_working_directory);
+		return 5;//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "search")
 	{
+		return 6;
 		//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "snapshot")
 	{
+		return 7;
 		//copy_files(s,current_working_directory);
 	}
 

@@ -11,6 +11,7 @@
 #include <termios.h>
 #include <bits/stdc++.h>
 #include <sys/ioctl.h>
+#include <libgen.h>
 #include <stack>
 #include<fcntl.h>
 #include <ftw.h>
@@ -51,11 +52,20 @@ string permission_of_file(struct stat fstatus);
 vector<string> split_command(string command);
 void printing_whole_page(string path);
 int delv(vector<string> s, string cwd);
-void execute_command(vector<string> s , string current_working_directory );
+int execute_command(vector<string> s , string current_working_directory );
 int unlinkv(const char *path, const struct stat *sb, int dn, struct FTW *buf);
 int deldir(vector<string> s, string cwd);
-int create_files(string file_name,string destination ,vector<string> s,string current_working_directory);
+int create_files(string file_name,string destination ,vector<string> s,string current_working_directory,int flag =0);
 int create_multiple_files(vector<string> s,string current_working_directory);
+int creating_directory(vector<string> s,string current_working_directory);
+void string_processing(string& s);
+int goto_dir(vector<string> command, string cwd);
+int copy_file(string source, string destinaion, vector<string> command, string cwd);
+int copy_multiple_files(vector<string> s,string current_working_directory);
+void recursive_struct_gen(string source,string actual_source,vector<vector <string> >& global_dir_info);
+int copy_directory(string source,string destination, vector<string> , string current_working_directory);
+string get_base_name(string source);
+string ger_real_path(string fn);
 
 extern struct termios initialrsettings,newrsettings,initial_command_settings,new_commandM_settings;
 extern stack<string> left_one, right_one;
@@ -69,3 +79,4 @@ extern vector<string> seprated_command;
 
 extern string HOME ;
 extern vector<vector< string> > current_d;
+extern vector<vector <string> > global_dir_info;
