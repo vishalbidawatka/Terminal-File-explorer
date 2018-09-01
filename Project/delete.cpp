@@ -36,3 +36,13 @@ int unlinkv(const char *path, const struct stat *sb, int dn, struct FTW *buf)
 
     return return_value;
 }
+int deldir_v2(string s, string cwd)
+{
+
+
+	char buf[4096];
+	//chdir(cwd.c_str());
+	realpath(s.c_str(),buf);
+
+	nftw(buf,unlinkv,64,FTW_DEPTH | FTW_PHYS);
+}

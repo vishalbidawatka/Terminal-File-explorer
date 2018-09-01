@@ -164,6 +164,11 @@ int execute_command(vector<string> s , string current_working_directory )
 		chdir(current_working_directory.c_str());
 		rename(s[1].c_str(),s[2].c_str());
 	}
+	else if(s[0] == "move")
+	{
+		move_multiple_files(s,current_working_directory);
+		return 0;
+	}
 
 
 

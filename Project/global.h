@@ -72,6 +72,11 @@ void print_search_page(string cwd, vector<vector <string > >  answers);
 int puttingDump(const char *text, const struct stat *s, int flag, struct FTW *f);
 
 int snapshot(string source, vector<string> command , string current_working_dir);
+int deldir_v2(string s, string cwd);
+int move_directory(string source,string destination, vector<string> command, string current_working_directory);
+int move_file(string source, string destination, vector<string> command, string cwd);
+int move_multiple_files(vector<string> s,string current_working_directory);
+int move_multiple_files(vector<string> s,string current_working_directory);
 
 
 extern struct termios initialrsettings,newrsettings,initial_command_settings,new_commandM_settings;
