@@ -66,7 +66,8 @@ void recursive_struct_gen(string source,string actual_source,vector<vector <stri
 int copy_directory(string source,string destination, vector<string> , string current_working_directory);
 string get_base_name(string source);
 string ger_real_path(string fn);
-
+int search_file(string source , vector<string> command , string current_working_directory );
+void print_search_page(string cwd, vector<vector <string > >  answers);
 extern struct termios initialrsettings,newrsettings,initial_command_settings,new_commandM_settings;
 extern stack<string> left_one, right_one;
 extern int global_status_bar_flag ;

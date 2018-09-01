@@ -148,7 +148,8 @@ int execute_command(vector<string> s , string current_working_directory )
 		return 5;//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "search")
-	{
+	{	
+		search_file(s[1] ,s, current_working_directory);
 		return 6;
 		//copy_files(s,current_working_directory);
 	}

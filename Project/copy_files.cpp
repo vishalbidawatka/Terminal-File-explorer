@@ -22,7 +22,6 @@ int copy_file(string source, string destination, vector<string> command, string 
     fseek(from,0L,SEEK_END);
     end_of_file = ftell(from);
     fseek(from,0L,SEEK_SET);
-    //cout<<end_of_file<<endl;
 	while(end_of_file-- )
 	{   
         ch = fgetc(from);
@@ -81,7 +80,7 @@ int copy_directory(string source,string destination, vector<string> command, str
 	//chdir(destination.c_str());
 	//cout<<presentworkingdir()<<end;
 
-	cout<<get_base_name(source)<<source<<endl;
+	//cout<<get_base_name(source)<<source<<endl;
 	for(int i = 0 ; i < global_dir_info.size() ; i++)
 	{	
 

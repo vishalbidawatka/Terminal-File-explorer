@@ -83,3 +83,15 @@ void printing_whole_page(string path)
 	cursor = 0;
 	scrollcount  = 0;
 }
+void print_search_page(string cwd, vector<vector <string > > answers)
+{
+	clear();
+	for(int i = 0 ; i < answers.size() ; i++)
+	{
+		cout<<answers[i][0]<<" "<<answers[i][1]<<" "<<answers[i][3]<<" "<<endl;
+	}
+	home();
+	relative_count = 0;
+	cursor = 0;
+	scrollcount = 0;
+}
