@@ -15,6 +15,7 @@
 #include <stack>
 #include<fcntl.h>
 #include <ftw.h>
+#include <utility>
 
 using namespace std;
 
@@ -68,6 +69,11 @@ string get_base_name(string source);
 string ger_real_path(string fn);
 int search_file(string source , vector<string> command , string current_working_directory );
 void print_search_page(string cwd, vector<vector <string > >  answers);
+int puttingDump(const char *text, const struct stat *s, int flag, struct FTW *f);
+
+int snapshot(string source, vector<string> command , string current_working_dir);
+
+
 extern struct termios initialrsettings,newrsettings,initial_command_settings,new_commandM_settings;
 extern stack<string> left_one, right_one;
 extern int global_status_bar_flag ;
@@ -81,3 +87,4 @@ extern vector<string> seprated_command;
 extern string HOME ;
 extern vector<vector< string> > current_d;
 extern vector<vector <string> > global_dir_info;
+extern string maintext;

@@ -154,9 +154,15 @@ int execute_command(vector<string> s , string current_working_directory )
 		//copy_files(s,current_working_directory);
 	}
 	else if(s[0] == "snapshot")
-	{
+	{	
+		snapshot(s[1],s,current_working_directory);
 		return 7;
 		//copy_files(s,current_working_directory);
+	}
+	else if(s[0] == "rename")
+	{
+		chdir(current_working_directory.c_str());
+		rename(s[1].c_str(),s[2].c_str());
 	}
 
 
