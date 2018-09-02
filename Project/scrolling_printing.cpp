@@ -7,22 +7,26 @@ int print_content(std::vector<std::vector<string>> &filesinfo)
 	{
 		for (int i = 0; i < filesinfo.size(); i++)
 		{
+			cout << setw(3) << i + 1 << "."
+				 << " ";
 			for (int j = 0; j < filesinfo[i].size(); j++)
 			{
 				cout << filesinfo[i][j] << " ";
 			}
-			cout << i << endl;
+			cout << endl;
 		}
 	}
 	else
 	{ //cout<<"ROWS"<<rows;
 		for (int i = 0; i < rows - 1; i++)
 		{
+			cout << setw(3) << i + 1 << "."
+				 << " ";
 			for (int j = 0; j < filesinfo[i].size(); j++)
 			{
 				cout << filesinfo[i][j] << " ";
 			}
-			cout << i << endl;
+			cout << endl;
 		}
 	}
 }
@@ -30,11 +34,13 @@ void print_scrolling_content(std::vector<std::vector<string>> &filesinfo, int cu
 {
 	for (int i = cursor_pos; i < rows + cursor_pos - 1; i++)
 	{
+		cout << setw(3) << i + 1 << "."
+			 << " ";
 		for (int j = 0; j < filesinfo[i].size(); j++)
 		{
 			cout << filesinfo[i][j] << " ";
 		}
-		cout << i << endl;
+		cout << endl;
 	}
 }
 int scrollingflag(vector<vector<string>> &a)
@@ -66,6 +72,9 @@ void print_search_page(string cwd, vector<vector<string>> answers)
 	{
 		cout << answers[i][0] << " " << answers[i][1] << " " << answers[i][3] << " " << endl;
 	}
+	cout << endl
+		 << endl;
+	cout << "PRESS ESC TO GO BACK";
 	home();
 	relative_count = 0;
 	cursor = 0;
