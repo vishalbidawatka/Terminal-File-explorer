@@ -23,11 +23,9 @@ int snapshot(string source, vector<string> command, string current_working_dir)
 			{
 				fprintf(dump, "\t");
 			}
-			//cout<<sorteddump[i].first<<" "<<sorteddump[i].second<<endl;
 			fprintf(dump, "%s\n", sorteddump[i].second.c_str());
 		}
 		fclose(dump);
-		//cout << "DUMP CREATED";
 	}
 }
 int puttingDump(const char *textpath, const struct stat *s, int flag, struct FTW *f)

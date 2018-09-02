@@ -2,7 +2,9 @@
 //Name: VISHAL BIDAWATKA
 #include "global.h"
 void recursive_struct_gen(string source, string actual_source, vector<vector<string>> &global_dir_info)
-{
+{   
+    // generates the list of files in current directly recursively parsing through.
+
     DIR *dir;
     struct dirent *entry;
     if (!(dir = opendir(source.c_str())))

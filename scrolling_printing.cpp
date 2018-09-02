@@ -17,7 +17,7 @@ int print_content(std::vector<std::vector<string>> &filesinfo)
 		}
 	}
 	else
-	{ //cout<<"ROWS"<<rows;
+	{ 
 		for (int i = 0; i < rows - 1; i++)
 		{
 			cout << setw(3) << i + 1 << "."

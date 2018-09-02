@@ -14,9 +14,8 @@ int create_files(string file_name, string destination, vector<string> s, string 
 		chdir(current_working_directory.c_str());
 	}
 	else if (destination[0] == '~')
-	{ //cout<<destination<<"destination"<<endl;
+	{ 
 		destination.erase(0, 2);
-		//cout<<destination<<endl;
 		realpath(destination.c_str(), buf);
 		strcat(buf, "/\0");
 		int b = chdir(buf);

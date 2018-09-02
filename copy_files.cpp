@@ -2,7 +2,9 @@
 //Name: VISHAL BIDAWATKA
 #include "global.h"
 int copy_file(string source, string destination, vector<string> command, string cwd)
-{
+{	
+	//copy_files
+
 	char ch;
 	FILE *from, *to;
 	int end_of_file;
@@ -68,15 +70,9 @@ int copy_directory(string source, string destination, vector<string> command, st
 	char *buf2;
 	strcpy(buf, source.c_str());
 	buf2 = basename(buf);
-	//cout<<string(buf2)<<endl;
 	mkdir((destination + "/" + string(buf2)).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-	//cout<<destination+"/"+string(buf2)<<endl;
-	//chdir(destination.c_str());
-	//cout<<presentworkingdir()<<end;
-	//cout<<get_base_name(source)<<source<<endl;
 	for (int i = 0; i < global_dir_info.size(); i++)
 	{
-		//cout<<global_dir_info[i][2]<<" "<<global_dir_info[i][3]<<endl;
 		if (get_base_name(source) == source)
 		{
 			if (global_dir_info[i][1] == "r")

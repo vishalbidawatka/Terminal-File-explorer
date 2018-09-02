@@ -21,6 +21,9 @@
 
 using namespace std;
 
+/* contains all the global variables, functions and header files */
+
+
 #define clear_line() printf("%c[2K", 27);
 #define clear() printf("\033[H\033[J")
 #define home() printf("\033[1;0H")

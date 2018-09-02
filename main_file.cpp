@@ -87,7 +87,6 @@ int main(int argc, char const *argv[])
 				{
 					cursor++;
 				}
-				//cout<<cursor<<" "<<relative_count;
 			}
 		}
 		if (c == 'A')
@@ -135,7 +134,6 @@ int main(int argc, char const *argv[])
 		}
 		if (c == 'D')
 		{
-			//cout<<"left";
 			string temp = left_one.top();
 			if (temp != HOME || (left_one.size() != 1))
 			{
@@ -167,7 +165,6 @@ int main(int argc, char const *argv[])
 		{
 			command_mode_flag = 1;
 			enter_command_mode(presentworkingdir());
-			//global_status_bar_flag = 1;
 		}
 		display_status_bar(cursor, global_status_bar_flag);
 	}
