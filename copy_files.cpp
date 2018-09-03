@@ -31,6 +31,7 @@ int copy_file(string source, string destination, vector<string> command, string 
 	}
 	fclose(from);
 	fclose(to);
+	//this will make the mode of the copied file simillar to orginial one.
 	chmod(destination.c_str(), mode);
 	return 1;
 }
@@ -70,7 +71,15 @@ int copy_directory(string source, string destination, vector<string> command, st
 	char *buf2;
 	strcpy(buf, source.c_str());
 	buf2 = basename(buf);
+
+	//made the source folder inside the destination folder.
+
 	mkdir((destination + "/" + string(buf2)).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+
+	/*now from the recursive list of source directory we take one by one 
+	filename and check wether it is a directory or file and we make simmilar 
+	file or folder in destination.
+	*/
 	for (int i = 0; i < global_dir_info.size(); i++)
 	{
 		if (get_base_name(source) == source)

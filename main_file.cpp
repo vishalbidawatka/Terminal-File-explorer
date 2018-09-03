@@ -21,7 +21,9 @@ void windowsize(int &a, int &b)
 	b = w.ws_col;
 }
 int main(int argc, char const *argv[])
-{
+{	
+	//this is the main driving code which handles the input and key bindings and shifting to command mode.
+
 	char c;
 	int down_scroll_flag = 0;
 	setting_terminal_attributes();
@@ -53,7 +55,6 @@ int main(int argc, char const *argv[])
 			}
 			else
 			{
-				//int storing_i = i;
 				char buf2[4096];
 				realpath(current_d[relative_count][4].c_str(), buf2);
 				strcat(buf2, "\0");
@@ -64,7 +65,6 @@ int main(int argc, char const *argv[])
 					exit(1);
 				}
 			}
-			//forcecursor(i,0);
 		}
 		if (c == 'B')
 		{

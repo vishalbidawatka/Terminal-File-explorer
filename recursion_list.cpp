@@ -12,7 +12,7 @@ void recursive_struct_gen(string source, string actual_source, vector<vector<str
     while ((entry = readdir(dir)) != NULL)
     {
         string path = "";
-        string path_to_be_pushed = "";
+        string path_to_be_pushed = ""; //maintain the actual path to be remmembered.
         vector<string> current_info;
         if (entry->d_type == DT_DIR)
         {
@@ -25,7 +25,7 @@ void recursive_struct_gen(string source, string actual_source, vector<vector<str
             current_info.push_back(path);
             current_info.push_back(path_to_be_pushed);
             global_dir_info.push_back(current_info);
-            recursive_struct_gen(path, path_to_be_pushed, global_dir_info);
+            recursive_struct_gen(path, path_to_be_pushed, global_dir_info); //recursive call.
         }
         else
         {
@@ -39,7 +39,9 @@ void recursive_struct_gen(string source, string actual_source, vector<vector<str
     closedir(dir);
 }
 string get_base_name(string source)
-{
+{   
+    //returns A in B/D/A
+
     char buf[source.size() + 1];
     char *buf2;
     strcpy(buf, source.c_str());
@@ -47,7 +49,9 @@ string get_base_name(string source)
     return string(buf2);
 }
 string ger_real_path(string fn)
-{
+{   
+    //returns whole actual path
+    
     char buf[4096];
     realpath(fn.c_str(), buf);
     return string(buf);

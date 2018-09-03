@@ -7,10 +7,10 @@ OBJ =delete.o file_status.o scrolling_printing.o command_handling.o creating_fil
 %.o: %.cpp $(DEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-vishalfm: $(OBJ)
+application: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
 	rm *.o
-fix:vishalfm
-	chmod +x vishalfm
+fix:application
+	chmod +x application

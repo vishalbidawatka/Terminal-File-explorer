@@ -23,6 +23,7 @@ using namespace std;
 
 /* contains all the global variables, functions and header files */
 
+//escape sequences
 
 #define clear_line() printf("%c[2K", 27);
 #define clear() printf("\033[H\033[J")
@@ -35,6 +36,8 @@ using namespace std;
 #define forcecursor(x, y) printf("\033[%d;%df", x, y)
 #define save_cursor() printf("\033[s")
 #define restore_cursor_back() printf("\0338");
+
+//general
 
 string presentworkingdir();
 vector<vector<string>> contentofpwd(string s);
@@ -52,31 +55,53 @@ void exit_command_mode(string current_working_directory);
 string permission_of_file(struct stat fstatus);
 vector<string> split_command(string command);
 void printing_whole_page(string path);
+
+//deletion
+
 int delv(vector<string> s, string cwd);
 int execute_command(vector<string> s, string current_working_directory);
 int unlinkv(const char *path, const struct stat *sb, int dn, struct FTW *buf);
 int deldir(vector<string> s, string cwd);
+
+//create
+
 int create_files(string file_name, string destination, vector<string> s, string current_working_directory, int flag = 0);
 int create_multiple_files(vector<string> s, string current_working_directory);
 int creating_directory(vector<string> s, string current_working_directory);
 void string_processing(string &s);
+
+//goto
+
 int goto_dir(vector<string> command, string cwd);
+
+//copy
+
 int copy_file(string source, string destinaion, vector<string> command, string cwd);
 int copy_multiple_files(vector<string> s, string current_working_directory);
 void recursive_struct_gen(string source, string actual_source, vector<vector<string>> &global_dir_info);
 int copy_directory(string source, string destination, vector<string>, string current_working_directory);
 string get_base_name(string source);
 string ger_real_path(string fn);
+
+//search
+
 int search_file(string source, vector<string> command, string current_working_directory);
 void print_search_page(string cwd, vector<vector<string>> answers);
-int puttingDump(const char *text, const struct stat *s, int flag, struct FTW *f);
 
+//snapshot
+
+int puttingDump(const char *text, const struct stat *s, int flag, struct FTW *f);
 int snapshot(string source, vector<string> command, string current_working_dir);
+
+//move
+
 int deldir_v2(string s, string cwd);
 int move_directory(string source, string destination, vector<string> command, string current_working_directory);
 int move_file(string source, string destination, vector<string> command, string cwd);
 int move_multiple_files(vector<string> s, string current_working_directory);
 int move_multiple_files(vector<string> s, string current_working_directory);
+
+//global variables
 
 extern struct termios initialrsettings, newrsettings, initial_command_settings, new_commandM_settings;
 extern stack<string> left_one, right_one;

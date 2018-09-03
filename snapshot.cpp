@@ -4,7 +4,12 @@
 string maintext = "";
 vector<pair<int, string>> sorteddump;
 int snapshot(string source, vector<string> command, string current_working_dir)
-{
+{	
+	/* nftw travese the whole tree but in an unordered fashion with respect to current directory, 
+		also nftw returns the depth at which file is present , so i collected first the list of files
+		and folders and the sorted them with respect to their depth and then dumped them in the dump
+		file with the space indent = depth of file */
+		
 	string destination = command[2];
 	string_processing(destination);
 	string_processing(source);

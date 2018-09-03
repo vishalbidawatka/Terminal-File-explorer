@@ -65,7 +65,9 @@ int creating_directory(vector<string> s, string current_working_directory)
 	}
 }
 void string_processing(string &s)
-{
+{	
+	//removes tilde and / from the destinaion
+	
 	if (s[0] == '~')
 	{
 		s.erase(0, 2);

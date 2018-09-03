@@ -2,7 +2,9 @@
 //Name: VISHAL BIDAWATKA
 #include "global.h"
 int move_multiple_files(vector<string> s, string current_working_directory)
-{
+{	
+	//move multiple files using move_file.
+
 	string destination = s[s.size() - 1];
 	string sources = s[1];
 	char filenamebuff[1024];
@@ -33,6 +35,9 @@ int move_file(string source, string destination, vector<string> command, string 
 }
 int move_directory(string source, string destination, vector<string> command, string current_working_directory)
 {
+	//first COPY SOURCE DIRECTORY TO DESTINATION
+	//second DELETE SOURCE DIRECTORY
+	
 	string_processing(source);
 	string_processing(destination);
 	copy_directory(source, destination, command, current_working_directory);

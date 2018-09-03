@@ -10,6 +10,9 @@ string presentworkingdir()
 }
 vector<vector<string>> contentofpwd(string s)
 {
+	//this function produces all the stats of the cwd and stores it into a 2d vector where each 
+	//row contains info of each file.
+	
 	struct dirent **dirent_structure;
 	DIR *dir;
 	vector<vector<string>> files_info;
@@ -54,7 +57,9 @@ vector<vector<string>> contentofpwd(string s)
 	return files_info;
 }
 string permission_of_file(struct stat fstatus)
-{
+{	
+	//it generates the permission of file by checking flags of mode field. 
+
 	string s;
 	mode_t mode = fstatus.st_mode;
 	if (S_ISDIR(mode))
