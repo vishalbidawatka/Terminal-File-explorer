@@ -1,8 +1,8 @@
-#Terminal-File-explorer
+# Terminal-File-explorer
 
 This application operates in two modes.
 
-#1) Normal Mode :
+# 1) Normal Mode :
 
 Firstly it displays the contents of the directory in which applications has started. Hereby the user can traverse into any directory by pressing enter and the application will list down its contents. If user presses enter key on file, it will open in the user's default application with respect to that file.
 
@@ -17,7 +17,7 @@ The application has the following features and key bindings.
 
 4) H key: Go to home directory from where the application has started.
 
-#2) Command Mode :
+# 2) Command Mode :
 
 The application supports following commands.
 COPY, MOVE, RENAME, CREATE, DELETE, GOTO, SEARCH, SNAPSHOT.
