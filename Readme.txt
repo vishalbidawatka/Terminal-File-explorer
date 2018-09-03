@@ -1,3 +1,8 @@
+ROll no : 2018201004
+Name : Vishal Bidawatka
+
+Final make file output name : application (run: ./application)
+
 Terminal-File-explorer
 This application operates in two modes.
 
