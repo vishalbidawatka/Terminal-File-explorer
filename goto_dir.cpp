@@ -12,7 +12,11 @@ int goto_dir(vector<string> command, string cwd)
 		global_status_bar_flag = 0;
 	}
 	else
-	{
+	{	
+		if(command[1][0] == '/')chdir(HOME.c_str());
+		else chdir(cwd.c_str());
+		if(command[1][0] == '.')chdir(HOME.c_str());
+		else chdir(cwd.c_str());
 		string_processing(command[1]);
 		char buff[4096];
 		realpath(command[1].c_str(), buff);

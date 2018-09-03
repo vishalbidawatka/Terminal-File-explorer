@@ -14,7 +14,6 @@ int snapshot(string source, vector<string> command, string current_working_dir)
 	string_processing(destination);
 	string_processing(source);
 	FILE *dump = fopen(destination.c_str(), "w");
-	cout << source << endl;
 	if (nftw(source.c_str(), puttingDump, FOPEN_MAX, 0) < 0)
 	{
 		cout << "error in snapshot";
@@ -32,6 +31,7 @@ int snapshot(string source, vector<string> command, string current_working_dir)
 		}
 		fclose(dump);
 	}
+	return 1;
 }
 int puttingDump(const char *textpath, const struct stat *s, int flag, struct FTW *f)
 {
