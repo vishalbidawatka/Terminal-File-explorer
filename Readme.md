@@ -1,6 +1,9 @@
 # Terminal-File-explorer
 
+**Final make file output name : application (run: ./application)**
+
 This application operates in two modes.
+
 
 # 1) Normal Mode :
 
